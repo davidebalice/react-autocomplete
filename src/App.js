@@ -11,7 +11,7 @@ const App = () => {
   return (
     <div className="App">
       <Header />
-      <Wrapper>
+      <Wrapper >
         <Autocomplete options={brands} />
       </Wrapper>
       <Footer />

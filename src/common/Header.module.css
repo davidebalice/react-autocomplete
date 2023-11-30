@@ -1,5 +1,5 @@
 .logo {
-  max-width: 180px !important;
+  max-width: 140px !important;
   height: auto;
 }
 
@@ -47,5 +47,5 @@
 }
 
 .wrapper{
-  min-height: calc(100vh - 328px);
+  min-height: calc(100vh - 155px);
 }

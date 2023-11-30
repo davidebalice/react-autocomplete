@@ -1,117 +1,97 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from "react";
+import Description from "./Description";
+import classes from "./Autocomplete.module.css";
 
-export class Autocomplete extends Component {
-  static propTypes = {
-    options: PropTypes.instanceOf(Array).isRequired
-  };
-  state = {
-    activeOption: 0,
-    filteredOptions: [],
-    showOptions: false,
-    userInput: ''
-  };
+const Autocomplete = ({ options }) => {
+  const [activeOption, setActiveOption] = useState(0);
+  const [filteredOptions, setFilteredOptions] = useState([]);
+  const [showOptions, setShowOptions] = useState(false);
+  const [userInput, setUserInput] = useState("");
 
-  onChange = (e) => {
-    console.log('onChanges');
+  if (!Array.isArray(options) || options.length === 0) {
+    return <div>Invalid or empty data</div>;
+  }
 
-    const { options } = this.props;
+  const onChange = (e) => {
     const userInput = e.currentTarget.value;
-
     const filteredOptions = options.filter(
-      (optionName) =>
-        optionName.toLowerCase().indexOf(userInput.toLowerCase()) > -1
+      (option) => option.toLowerCase().indexOf(userInput.toLowerCase()) > -1
     );
 
-    this.setState({
-      activeOption: 0,
-      filteredOptions,
-      showOptions: true,
-      userInput: e.currentTarget.value
-    });
+    setActiveOption(0);
+    setFilteredOptions(filteredOptions);
+    setShowOptions(true);
+    setUserInput(userInput);
   };
 
-  onClick = (e) => {
-    this.setState({
-      activeOption: 0,
-      filteredOptions: [],
-      showOptions: false,
-      userInput: e.currentTarget.innerText
-    });
+  const onClick = (e) => {
+    setActiveOption(0);
+    setFilteredOptions([]);
+    setShowOptions(false);
+    setUserInput(e.currentTarget.innerText);
   };
-  onKeyDown = (e) => {
-    const { activeOption, filteredOptions } = this.state;
 
+  const onKeyDown = (e) => {
     if (e.keyCode === 13) {
-      this.setState({
-        activeOption: 0,
-        showOptions: false,
-        userInput: filteredOptions[activeOption]
-      });
+      setActiveOption(0);
+      setShowOptions(false);
+      setUserInput(filteredOptions[activeOption]);
     } else if (e.keyCode === 38) {
       if (activeOption === 0) {
         return;
       }
-      this.setState({ activeOption: activeOption - 1 });
+      setActiveOption(activeOption - 1);
     } else if (e.keyCode === 40) {
       if (activeOption === filteredOptions.length - 1) {
-        console.log(activeOption);
         return;
       }
-      this.setState({ activeOption: activeOption + 1 });
+      setActiveOption(activeOption + 1);
     }
   };
 
-  render() {
-    const {
-      onChange,
-      onClick,
-      onKeyDown,
-
-      state: { activeOption, filteredOptions, showOptions, userInput }
-    } = this;
-    let optionList;
-    if (showOptions && userInput) {
-      if (filteredOptions.length) {
-        optionList = (
-          <ul className="options">
-            {filteredOptions.map((optionName, index) => {
-              let className;
-              if (index === activeOption) {
-                className = 'option-active';
-              }
-              return (
-                <li className={className} key={optionName} onClick={onClick}>
-                  {optionName}
-                </li>
-              );
-            })}
-          </ul>
-        );
-      } else {
-        optionList = (
-          <div className="no-options">
-            <em>No Option!</em>
-          </div>
-        );
-      }
+  let optionList;
+  if (showOptions && userInput) {
+    if (filteredOptions.length) {
+      optionList = (
+        <ul className="options">
+          {filteredOptions.map((optionName, index) => {
+            let className;
+            if (index === activeOption) {
+              className = "option-active";
+            }
+            return (
+              <li className={className} key={optionName} onClick={onClick}>
+                {optionName}
+              </li>
+            );
+          })}
+        </ul>
+      );
     }
-    return (
-      <>
-        <div className="search">
+  }
+
+  return (
+    <>
+      <Description />
+      <div className={`${classes.searchContainer}`}>
+        <div className={classes.search}>
           <input
             type="text"
-            className="searchBox"
+            className={`${classes.searchBox}`}
             onChange={onChange}
             onKeyDown={onKeyDown}
             value={userInput}
           />
-          <input type="submit" value="" className="search-btn" />
+          <input type="submit" value="" className={classes.searchBtn} />
         </div>
         {optionList}
-      </>
-    );
-  }
-}
-
+      </div>
+    </>
+  );
+};
+/*
+Autocomplete.propTypes = {
+  options: PropTypes.instanceOf(Array).isRequired,
+};
+*/
 export default Autocomplete;
